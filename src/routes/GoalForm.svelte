@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import * as Form from '$lib/components/ui/form';
@@ -11,16 +12,30 @@
 		today,
 		type DateValue
 	} from '@internationalized/date';
+	import { isNullOrUndefined } from 'is-what';
 	import { Calendar as CalendarIcon } from 'lucide-svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm, type FormResult } from 'sveltekit-superforms/client';
+	import type { ActionData } from './$types';
 	import { goalSchema, type GoalSchema } from './goalSchema';
 
 	export let form: SuperValidated<GoalSchema>;
 
 	const theForm = superForm(form, {
 		validators: goalSchema,
-		taintedMessage: null
+		taintedMessage: null,
+		onResult: async (event) => {
+			const result = event.result as FormResult<ActionData>;
+			if (result.type === 'success') {
+				const planData = result.data?.planData;
+
+				if (isNullOrUndefined(planData)) {
+					return;
+				}
+
+				await goto(`/plan?skills=${JSON.stringify(planData.skills)}`);
+			}
+		}
 	});
 
 	const { form: formStore } = theForm;
@@ -39,7 +54,8 @@
 	form={theForm}
 	class="space-y-6"
 	schema={goalSchema}
-	let:config>
+	let:config
+	debug>
 	<Form.Field {config} name="skill">
 		<Form.Item>
 			<Form.Label>Concept</Form.Label>
@@ -52,7 +68,9 @@
 		<Form.Item>
 			<Form.Label>Current Level</Form.Label>
 			<Form.Textarea />
-			<Form.Description>Describe your current level of understanding for the concept.</Form.Description>
+			<Form.Description>
+				Describe your current level of understanding for the concept.
+			</Form.Description>
 			<Form.Validation />
 		</Form.Item>
 	</Form.Field>
@@ -60,7 +78,9 @@
 		<Form.Item>
 			<Form.Label>Target Level</Form.Label>
 			<Form.Textarea />
-			<Form.Description>Describe your target level of understanding for the concept.</Form.Description>
+			<Form.Description>
+				Describe your target level of understanding for the concept.
+			</Form.Description>
 			<Form.Validation />
 		</Form.Item>
 	</Form.Field>
