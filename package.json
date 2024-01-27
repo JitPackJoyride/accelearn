@@ -49,6 +49,7 @@
     "sveltekit-superforms": "^1.13.4",
     "tailwind-merge": "^2.2.1",
     "tailwind-variants": "^0.1.20",
+    "twilio": "^4.21.0",
     "zod": "^3.22.4"
   }
 }
