@@ -1,8 +1,13 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-import PhoneInput from './PhoneInput.svelte';
+	import PhoneInput from './PhoneInput.svelte';
 
 	let phoneNumber = '';
+
+	function handleClickNext() {
+		localStorage.setItem('phoneNumber', phoneNumber);
+		window.location.href = '/login/phone-call';
+	}
 </script>
 
 <div class="p-2 overflow-hidden">
@@ -21,7 +26,7 @@ import PhoneInput from './PhoneInput.svelte';
 		<PhoneInput bind:phoneNumber />
 
 		{#if phoneNumber}
-        	<Button href="/login/call" class="text-xl">
+        	<Button on:click={handleClickNext} class="text-xl">
 				Next
 			</Button>
 		{/if}
