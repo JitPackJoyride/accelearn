@@ -2,13 +2,11 @@ import twilio from 'twilio';
 
 export async function POST(event) {
 	console.log(JSON.stringify(event));
-	console.log(event.request.formData);
+	console.log(event.request);
 
 	const formData = await event.request.formData();
-	Object.entries(formData).forEach(([key, value]) => {
-		console.log('formData key', key);
-		console.log('formData value', value);
-	});
+	let twilioData = Object.fromEntries(formData);
+	console.log('twilioData', twilioData);
 
 	let responder = new twilio.twiml.VoiceResponse();
 	responder.say(`Gracias amigo, speak to you tomorrow`);
