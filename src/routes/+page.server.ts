@@ -10,7 +10,6 @@ export const load = async () => {
 
 export const actions = {
 	default: async (event) => {
-		console.log('event', event);
 		const form = await superValidate(event, goalSchema);
 		if (!form.valid) {
 			return fail(400, {

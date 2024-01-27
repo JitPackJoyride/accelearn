@@ -5,7 +5,6 @@
 	import * as Popover from '$lib/components/ui/popover';
 	import { cn } from '$lib/utils';
 	import {
-		CalendarDate,
 		DateFormatter,
 		getLocalTimeZone,
 		parseDate,
@@ -28,24 +27,40 @@
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
-	let value: DateValue | undefined = $formStore.endDate ? parseDate($formStore.endDate) : undefined;
+	let endDateValue: DateValue | undefined = $formStore.endDate
+		? parseDate($formStore.endDate)
+		: undefined;
 	let placeholder: DateValue = today(getLocalTimeZone());
 </script>
 
 <Form.Root
 	method="POST"
-	action="?/default"
 	controlled
 	form={theForm}
 	class="space-y-6"
 	schema={goalSchema}
-	let:config
->
+	let:config>
 	<Form.Field {config} name="skill">
 		<Form.Item>
 			<Form.Label>Concept</Form.Label>
 			<Form.Input />
 			<Form.Description>Describe the concept you want to learn.</Form.Description>
+			<Form.Validation />
+		</Form.Item>
+	</Form.Field>
+	<Form.Field {config} name="currentLevel">
+		<Form.Item>
+			<Form.Label>Current Level</Form.Label>
+			<Form.Textarea />
+			<Form.Description>Describe your current level of understanding for the concept.</Form.Description>
+			<Form.Validation />
+		</Form.Item>
+	</Form.Field>
+	<Form.Field {config} name="targetLevel">
+		<Form.Item>
+			<Form.Label>Target Level</Form.Label>
+			<Form.Textarea />
+			<Form.Description>Describe your target level of understanding for the concept.</Form.Description>
 			<Form.Validation />
 		</Form.Item>
 	</Form.Field>
@@ -60,19 +75,18 @@
 						class={cn(
 							buttonVariants({ variant: 'outline' }),
 							'w-full justify-start pl-4 text-left font-normal',
-							!value && 'text-muted-foreground'
-						)}
-					>
-						{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+							!endDateValue && 'text-muted-foreground'
+						)}>
+						{endDateValue ? df.format(endDateValue.toDate(getLocalTimeZone())) : 'Pick a date'}
 						<CalendarIcon class="ml-auto h-4 w-4 opacity-50" />
 					</Popover.Trigger>
 				</Form.Control>
 				<Popover.Content align="start" class="w-auto p-0" side="bottom">
 					<Calendar
-						bind:value
+						bind:value={endDateValue}
 						bind:placeholder
-						minValue={new CalendarDate(1900, 1, 1)}
-						maxValue={today(getLocalTimeZone())}
+						minValue={today(getLocalTimeZone())}
+						maxValue={today(getLocalTimeZone()).add({ years: 1 })}
 						calendarLabel="Date of birth"
 						initialFocus
 						onValueChange={(v) => {
@@ -81,8 +95,7 @@
 							} else {
 								$formStore.endDate = '';
 							}
-						}}
-					/>
+						}} />
 				</Popover.Content>
 			</Popover.Root>
 			<Form.Description>When do you want to achieve this goal by?</Form.Description>
