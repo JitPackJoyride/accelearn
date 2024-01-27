@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Popover from '$lib/components/ui/popover';
-	import { goto } from '$app/navigation';
+import PhoneInput from './PhoneInput.svelte';
 
+	let phoneNumber = '';
 </script>
 
-<div class="p-6">
+<div class="p-2 overflow-hidden">
 
 	<div class="mb-3 shadow w-full fixed inset-0 h-fit p-4">
 		<h2 class="text-3xl font-extrabold tracking-tight lg:text-5xl">
@@ -13,11 +13,19 @@
 		</h2>
 	</div>
 
-    <h1 class="scroll-m-20 text-5xl font-extrabold tracking-tight lg:text-5xl mt-20">
-        Hi, what is your phone number?
-    </h1>
+	<div class="overflow-scroll h-full w-full flex flex-col gap-10 justify-center items-center">
+		<h1 class="scroll-m-20 text-5xl font-extrabold tracking-tight lg:text-5xl mt-20">
+			Hi, what is your phone number?
+		</h1>
 
-	
+		<PhoneInput bind:phoneNumber />
+
+		{#if phoneNumber}
+        	<Button href="/login/call" class="text-xl">
+				Next
+			</Button>
+		{/if}
+	</div>
 
     
 </div>
