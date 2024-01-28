@@ -18,7 +18,7 @@ export const callStateMachine = setup({
 			| { type: 'endDate.unrealistic'; endDate: string; estimatedEndDate: string }
 			| { type: 'estimatedDate.accepted'; endDate: string }
 			| { type: 'estimatedDate.rejected' }
-			| { type: 'create.confirm' }
+			| { type: 'create.confirm'; phone: string }
 			| { type: 'create.rejected' };
 	}
 }).createMachine({
@@ -98,19 +98,27 @@ export const callStateMachine = setup({
 				'create.confirm': {
 					target: 'close',
 					actions: [
-						async ({ context }) => {
+						async ({ context, event }) => {
 							await aiPlan({
 								skill: context.skill!,
 								current_capability: context.currentLevel!,
 								target_capability: context.targetLevel!,
 								start_date: new Date().toISOString(),
-								end_date: context.endDate!
+								end_date: context.endDate!,
+								phone: event.phone
 							});
 						}
 					]
 				},
 				'create.rejected': {
-					target: 'skill'
+					target: 'skill',
+					actions: assign({
+						skill: null,
+						currentLevel: null,
+						targetLevel: null,
+						endDate: null,
+						estimatedEndDate: null
+					})
 				}
 			}
 		},

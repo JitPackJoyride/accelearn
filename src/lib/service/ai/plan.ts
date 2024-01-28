@@ -17,9 +17,9 @@ export async function aiPlan(data: {
 	target_capability: string;
 	start_date: string;
 	end_date: string;
-	email?: string;
+	phone?: string;
 }) {
-	const response = await aiAxiosInstance.post<unknown>('/route', { ...data });
+	const response = await aiAxiosInstance.post<unknown>('/plan', { ...data });
 	if (response.status !== 200) {
 		throw new Error(`aiPlan failed with status ${response.status}`);
 	}

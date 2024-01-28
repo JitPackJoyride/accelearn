@@ -1,16 +1,19 @@
 import { aiAxiosInstance } from '$lib/service/ai/axios.js';
 import { aiRealistic } from '$lib/service/ai/realistic';
 import { callStateMachine } from '$lib/service/call/stateMachine.js';
+import { parseAbsoluteToLocal, toCalendarDate } from '@internationalized/date';
 import { json } from '@sveltejs/kit';
-import axios from 'axios';
 import { isNull, isNullOrUndefined } from 'is-what';
 import twilio from 'twilio';
 import { createActor } from 'xstate';
 
 export async function POST(event) {
 	// Start the state machine with the persisted state
+	console.log('📒 url', event.url);
+
 	const urlState = event.url.searchParams.get('state');
 	const persistedState = isNull(urlState) ? undefined : JSON.parse(decodeURIComponent(urlState));
+	console.log('persistedState', persistedState);
 	const actor = createActor(callStateMachine, persistedState ? { snapshot: persistedState } : {});
 	actor.start();
 
@@ -19,6 +22,7 @@ export async function POST(event) {
 	const currentState = actor.getSnapshot();
 	const formData = await event.request.formData();
 	const twilioData = Object.fromEntries(formData);
+	console.log('twilioData', twilioData);
 	switch (currentState.value) {
 		case 'skill':
 			actor.send({ type: 'skill.ok', skill: twilioData['SpeechResult']?.toString() ?? '' });
@@ -79,11 +83,11 @@ export async function POST(event) {
 					endDate: isRealistic.estimated_date ?? ''
 				});
 				responder.say(
-					`Your goal can be achieved by ${isRealistic.estimated_date}. Would you like to save this goal? Press 1 to accept or 2 to reject.`
+					`Your goal can be achieved by ${isRealistic.estimated_date}. Would you like to save this goal? Say yes if you want to save, otherwise say no.`
 				);
 				responder.gather({
-					action: `/api/goals-conversation?state=${JSON.stringify(actor.getPersistedSnapshot())}`,
-					numDigits: 1
+					action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
+					input: ['speech']
 				});
 			} else {
 				actor.send({
@@ -92,54 +96,65 @@ export async function POST(event) {
 					estimatedEndDate: isRealistic.estimated_date ?? ''
 				});
 				responder.say(
-					`That's not realistic, you'll need to extend your end date to ${isRealistic?.estimated_date}. Press 1 to accept or 2 to use your original target date.`
+					`That's not realistic, you'll need to extend your end date to ${toCalendarDate(parseAbsoluteToLocal(isRealistic?.estimated_date)).toString()}. The reason is because ${isRealistic.reasoning}. Say yes if you want to use the new estimated date, otherwise say no.`
 				);
 				responder.gather({
-					action: `/api/goals-conversation?state=${JSON.stringify(actor.getPersistedSnapshot())}`,
-					numDigits: 1
+					action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
+					input: ['speech']
 				});
 			}
 			break;
 		}
 		case 'acceptEstimatedDate':
-			if (twilioData['Digits'] === '1') {
+			console.log('currentState.context ', currentState.context!);
+			console.log('twilioData', twilioData);
+			if (twilioData['SpeechResult']?.toString().includes('yes')) {
 				actor.send({
 					type: 'estimatedDate.accepted',
 					endDate: currentState.context.estimatedEndDate!
 				});
 				responder.say(
-					'Your goal will be targeted to finish by our estimated date. Do you want to save this goal? Press 1 to accept or 2 to reject.'
+					'Your goal will be targeted to finish by our estimated date. Do you want to save this goal? Say yes if you want to save, otherwise say no.'
 				);
 				responder.gather({
 					action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
-					numDigits: 1
+					input: ['speech']
 				});
 			} else {
 				actor.send({
 					type: 'estimatedDate.rejected'
 				});
 				responder.say(
-					'Your goal will be targeted to finish by the date you specified. Do you want to save this goal? Press 1 to accept or 2 to reject.'
+					'Your goal will be targeted to finish by the date you specified. Do you want to save this goal? Say yes if you want to save, otherwise say no.'
 				);
 				responder.gather({
 					action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
-					numDigits: 1
+					input: ['speech']
 				});
 			}
 			break;
 		case 'create':
-			if (twilioData['Digits'] === '1') {
+			console.log('currentState.context ', currentState.context!);
+			console.log('twilioData', twilioData);
+			if (twilioData['SpeechResult']?.toString().includes('yes')) {
 				actor.send({
-					type: 'create.confirm'
+					type: 'create.confirm',
+					phone: twilioData['Caller']?.toString() ?? ''
 				});
 				responder.say('Your goal has been saved.');
 			} else {
 				actor.send({
 					type: 'create.rejected'
 				});
-				responder.say('Your goal has been rejected. Please make a new goal.');
+				responder.say(
+					'Your goal has been rejected. Please make a new goal. Tell me what you want to learn?'
+				);
+				responder.gather({
+					action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
+					input: ['speech'],
+					speechTimeout: 'auto'
+				});
 				actor.stop();
-				await axios.post('/api/goals');
 			}
 			break;
 		default:
