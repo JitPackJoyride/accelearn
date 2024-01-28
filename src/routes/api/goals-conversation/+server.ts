@@ -26,7 +26,7 @@ export async function POST(event) {
 	switch (currentState.value) {
 		case 'skill':
 			actor.send({ type: 'skill.ok', skill: twilioData['SpeechResult']?.toString() ?? '' });
-			responder.say("What is your current level for the skill you're working on?");
+			responder.say(`How good are you at ${actor.getSnapshot().context.skill}? What can you do?`);
 			responder.gather({
 				action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
 				input: ['speech'],
@@ -39,7 +39,7 @@ export async function POST(event) {
 				type: 'currentLevel.ok',
 				currentLevel: twilioData['SpeechResult']?.toString() ?? ''
 			});
-			responder.say("What is your target level for the skill you're working on?");
+			responder.say('Tell me, what would you like to be able to do?');
 			responder.gather({
 				action: `/api/goals-conversation?state=${encodeURIComponent(JSON.stringify(actor.getPersistedSnapshot()))}`,
 				input: ['speech'],
@@ -141,7 +141,9 @@ export async function POST(event) {
 					type: 'create.confirm',
 					phone: twilioData['Caller']?.toString() ?? ''
 				});
-				responder.say('Your goal has been saved.');
+				responder.say(
+					`I\'ve made you a detailed plan, which you can view at accelearn dot vercel dot app. Speak soon, fellow human.`
+				);
 			} else {
 				actor.send({
 					type: 'create.rejected'

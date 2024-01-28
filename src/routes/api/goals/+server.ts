@@ -2,7 +2,9 @@ import twilio from 'twilio';
 
 export async function POST() {
 	const responder = new twilio.twiml.VoiceResponse();
-	responder.say(`Tell me what you'd like to learn?`);
+	responder.say(
+		`Greetings, I'm your new coach: totally not a robot. What skill would you like to get better at?`
+	);
 	responder.gather({ action: `/api/goals-conversation`, input: ['speech'], speechTimeout: 'auto' });
 
 	const options: ResponseInit = {
