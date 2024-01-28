@@ -1,10 +1,9 @@
 import twilio from 'twilio';
 
 export async function POST() {
-	console.log('POST /api/goals/+server.ts');
-	let responder = new twilio.twiml.VoiceResponse();
-	responder.say(`Tell me what you'd like to learn, when by and what your current level is`);
-	responder.gather({ action: '/api/goals?', input: ['speech'] });
+	const responder = new twilio.twiml.VoiceResponse();
+	responder.say(`Tell me what you'd like to learn?`);
+	responder.gather({ action: `/api/goals-conversation`, input: ['speech'] });
 
 	const options: ResponseInit = {
 		headers: {

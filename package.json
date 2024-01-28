@@ -40,6 +40,7 @@
   "type": "module",
   "dependencies": {
     "@internationalized/date": "^3.5.1",
+    "@xstate/cli": "^0.5.17",
     "axios": "^1.6.7",
     "bits-ui": "^0.15.1",
     "clsx": "^2.1.0",
@@ -50,6 +51,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwind-variants": "^0.1.20",
     "twilio": "^4.21.0",
+    "xstate": "^5.5.2",
     "zod": "^3.22.4"
   }
 }

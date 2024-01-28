@@ -13,10 +13,10 @@ export const aiPlanSchema = z.object({
 
 export async function aiPlan(data: {
 	skill: string;
+	current_capability: string;
 	target_capability: string;
 	start_date: string;
 	end_date: string;
-	current_capability: string;
 	email?: string;
 }) {
 	const response = await aiAxiosInstance.post<unknown>('/route', { ...data });
