@@ -10,22 +10,17 @@
 
 	function handleClickNext() {
 		localStorage.setItem('phoneNumber', phoneNumber);
-		goto(`/${encodeURIComponent(selectedCountry.dialCode)}${phoneNumber}`);
+		goto(`/${encodeURIComponent(selectedCountry.dialCode)}${phoneNumber}`, {});
 	}
 </script>
 
-<div class="h-full p-2">
-	<div class="fixed inset-0 mb-3 h-fit w-full p-4 shadow">
-		<h2 class="text-3xl font-extrabold tracking-tight lg:text-5xl">Accelearn</h2>
-	</div>
-
-	<div class="flex h-full w-full flex-col items-center justify-center gap-10">
-		<h1 class="mt-20 scroll-m-20 text-5xl font-extrabold tracking-tight lg:text-5xl">
-			Hi, what is your phone number?
-		</h1>
-		<PhoneInput bind:selectedCountry bind:phoneNumber />
-		<Button on:click={handleClickNext} disabled={isEmptyString(phoneNumber)} class="text-xl">
-			Next
-		</Button>
-	</div>
+<div class="flex h-full flex-col items-center justify-center gap-5">
+	<h1
+		class="max-w-[20ch] text-balance text-center text-5xl font-extrabold tracking-tight lg:text-5xl">
+		Hi, what is your phone number?
+	</h1>
+	<PhoneInput bind:selectedCountry bind:phoneNumber />
+	<Button on:click={handleClickNext} disabled={isEmptyString(phoneNumber)} class="text-xl">
+		Next
+	</Button>
 </div>
