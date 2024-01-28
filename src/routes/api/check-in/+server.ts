@@ -12,7 +12,7 @@ export async function POST() {
 	const client = twilio(accountSid, authToken);
 	const voiceResponse = new twilio.twiml.VoiceResponse();
 	voiceResponse.say(
-		'Hey cowboy, this is your daily check in. How are you getting on with your phonics?'
+		'Hey cowboy, this is your daily check in. How are you getting on with your phonics? Leave a message after the tone.'
 	);
 	voiceResponse.record({
 		transcribe: true,

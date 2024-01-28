@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import { buttonVariants } from '$src/lib/components/ui/button/index.js';
 	import { parseAbsoluteToLocal, toCalendarDate } from '@internationalized/date';
 	import { capitalCase } from 'case-anything';
