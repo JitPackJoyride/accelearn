@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { buttonVariants } from '$src/lib/components/ui/button/index.js';
 	import { parseAbsoluteToLocal, toCalendarDate } from '@internationalized/date';
 	import { capitalCase } from 'case-anything';
@@ -38,7 +39,11 @@
 		{/each}
 	</div>
 </div>
-
+<div class="fixed bottom-5 mx-auto flex w-full max-w-screen-md items-center">
+	<a href="tel:+447700169965" class={buttonVariants({ class: 'mx-auto' })}>
+		Call now to set a new goal
+	</a>
+</div>
 {#snippet calendar()}
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
