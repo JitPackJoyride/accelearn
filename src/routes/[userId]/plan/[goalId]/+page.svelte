@@ -24,22 +24,28 @@
 		<p class="text-sm text-muted-foreground">Target Capability</p>
 		<p class="text-pretty">{data.plan.target_capability}</p>
 	</div>
-	<h3 class="text-xl font-semibold">Plan</h3>
-	<div class="flex flex-col gap-4">
-		{#each data.plan.skills as skill}
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>{capitalCase(skill.name)}</Card.Title>
-					<Card.Description>Card Description</Card.Description>
-				</Card.Header>
-				<Card.Content>
-					<p>Card Content</p>
-				</Card.Content>
-				<Card.Footer>
-					<p>Card Footer</p>
-				</Card.Footer>
-			</Card.Root>
-		{/each}
+	<div class="flex flex-col gap-2">
+		<h3 class="text-2xl font-semibold">Plan</h3>
+		<div class="flex flex-col gap-4">
+			{#each data.plan.skills as skill}
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>{capitalCase(skill.name)}</Card.Title>
+						<div class="flex items-center gap-1 text-sm text-muted-foreground">
+							{@render calendar()}
+							<p>
+								{toCalendarDate(
+									parseAbsoluteToLocal(new Date(skill.date).toISOString())
+								).toString()}
+							</p>
+						</div>
+					</Card.Header>
+					<Card.Content>
+						<p class="text-pretty">{skill.description}</p>
+					</Card.Content>
+				</Card.Root>
+			{/each}
+		</div>
 	</div>
 </main>
 
