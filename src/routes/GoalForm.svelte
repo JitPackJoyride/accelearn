@@ -58,9 +58,9 @@
 	debug>
 	<Form.Field {config} name="skill">
 		<Form.Item>
-			<Form.Label>Concept</Form.Label>
+			<Form.Label>Skill</Form.Label>
 			<Form.Input />
-			<Form.Description>Describe the concept you want to learn.</Form.Description>
+			<Form.Description>Describe the skill you want to learn.</Form.Description>
 			<Form.Validation />
 		</Form.Item>
 	</Form.Field>
@@ -69,7 +69,7 @@
 			<Form.Label>Current Level</Form.Label>
 			<Form.Textarea />
 			<Form.Description>
-				Describe your current level of understanding for the concept.
+				Describe your current level of understanding for the skill.
 			</Form.Description>
 			<Form.Validation />
 		</Form.Item>
@@ -79,7 +79,7 @@
 			<Form.Label>Target Level</Form.Label>
 			<Form.Textarea />
 			<Form.Description>
-				Describe your target level of understanding for the concept.
+				Describe your target level of understanding for the skill.
 			</Form.Description>
 			<Form.Validation />
 		</Form.Item>
