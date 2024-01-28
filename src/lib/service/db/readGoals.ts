@@ -1,5 +1,6 @@
 import { db } from './connection';
 
 export async function dbReadGoals() {
-	return await db.selectFrom('goals');
+	const query = db.selectFrom('goals');
+	return await query.selectAll().execute();
 }

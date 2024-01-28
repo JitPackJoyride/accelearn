@@ -1,6 +1,8 @@
 import type Database from '$src/models/Database'; // this is the Database interface we defined earlier
 import { Kysely, PostgresDialect } from 'kysely';
-import { Pool } from 'pg';
+import pkg from 'pg';
+
+const { Pool } = pkg;
 
 const dialect = new PostgresDialect({
 	pool: new Pool({
