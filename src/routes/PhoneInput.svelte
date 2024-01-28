@@ -1,10 +1,9 @@
-<script>
+<script lang="ts">
 	import { Input } from '$lib/components/ui/input';
 	import Countries from './Countries.svelte';
-	import { countries } from './countries';
-	// Assuming countries are exported from a separate file
+	import type { Country } from './countries';
 
-	let selectedCountry = countries[0]; // Default to the first country
+	export let selectedCountry: Country;
 	export let phoneNumber = '';
 </script>
 
